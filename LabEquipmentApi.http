@@ -19,3 +19,24 @@ GET {{LabEquipmentApi_HostAddress}}/api/equipment/available
 Accept: application/json
 
 ###
+
+POST {{LabEquipmentApi_HostAddress}}/api/equipment
+Content-Type: application/json
+
+{"name":"Keyboard","room":"Lab 10"}
+
+###
+
+POST {{LabEquipmentApi_HostAddress}}/api/equipment
+Content-Type: application/json
+
+{"name":"","room":"Lab 10"}
+
+###
+
+POST {{LabEquipmentApi_HostAddress}}/api/equipment
+Content-Type: application/json
+
+{"name":"Mouse","room":""}
+
+###

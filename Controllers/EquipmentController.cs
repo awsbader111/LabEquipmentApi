@@ -1,3 +1,4 @@
+using FluentValidation;
 using LabEquipmentApi.Contracts.Equipment;
 using LabEquipmentApi.Data;
 using LabEquipmentApi.Domain;
@@ -17,10 +18,13 @@ namespace LabEquipmentApi.Controllers
     public class EquipmentController : ControllerBase
     {
         private readonly LabDbContext _context;
+        private readonly IValidator<CreateEquipmentRequest> _createValidator;
 
-        public EquipmentController(LabDbContext context)
+        public EquipmentController(LabDbContext context,
+            IValidator<CreateEquipmentRequest> createValidator)
         {
             _context = context;
+            _createValidator = createValidator;
         }
 
         // GET: api/equipment
@@ -89,14 +93,34 @@ namespace LabEquipmentApi.Controllers
         }
 
         // POST: api/equipment
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
+        public async Task<ActionResult<EquipmentListItemResponse>> PostEquipment(CreateEquipmentRequest request)
         {
+            var validationResult = await _createValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                return ValidationProblem(ModelState);
+            }
+
+            var equipment = new Equipment
+            {
+                Name = request.Name,
+                Room = request.Room,
+                IsAvailable = true
+            };
+
             _context.EquipmentItems.Add(equipment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEquipment", new { id = equipment.Id }, equipment);
+            var response = equipment.Adapt<EquipmentListItemResponse>();
+
+            return CreatedAtAction(nameof(GetEquipment), new { id = equipment.Id }, response);
         }
 
         // DELETE: api/equipment/5
