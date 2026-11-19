@@ -1,5 +1,7 @@
+using LabEquipmentApi.Contracts.Equipment;
 using LabEquipmentApi.Data;
 using LabEquipmentApi.Domain;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +28,19 @@ namespace LabEquipmentApi.Controllers
         public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentItems()
         {
             return await _context.EquipmentItems.ToListAsync();
+        }
+
+        // GET: api/equipment/available
+        [HttpGet("available")]
+        public async Task<ActionResult<IEnumerable<EquipmentListItemResponse>>> GetAvailableEquipment()
+        {
+            var equipment = await _context.EquipmentItems
+                .Where(e => e.IsAvailable)
+                .OrderBy(e => e.Name)
+                .ProjectToType<EquipmentListItemResponse>()
+                .ToListAsync();
+
+            return Ok(equipment);
         }
 
         // GET: api/equipment/5
