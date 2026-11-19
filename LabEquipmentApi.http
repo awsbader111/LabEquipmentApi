@@ -1,2 +1,16 @@
 @LabEquipmentApi_HostAddress = http://localhost:5164
 
+GET {{LabEquipmentApi_HostAddress}}/api/equipment
+Accept: application/json
+
+###
+
+GET {{LabEquipmentApi_HostAddress}}/api/equipment/1
+Accept: application/json
+
+###
+
+GET {{LabEquipmentApi_HostAddress}}/api/equipment/999
+Accept: application/json
+
+###
