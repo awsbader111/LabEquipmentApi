@@ -40,3 +40,8 @@ Content-Type: application/json
 {"name":"Mouse","room":""}
 
 ###
+
+GET {{LabEquipmentApi_HostAddress}}/api/equipment/room-summary
+Accept: application/json
+
+###

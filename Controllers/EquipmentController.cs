@@ -47,6 +47,24 @@ namespace LabEquipmentApi.Controllers
             return Ok(equipment);
         }
 
+        // GET: api/equipment/room-summary
+        [HttpGet("room-summary")]
+        public async Task<ActionResult<IEnumerable<RoomSummaryResponse>>> GetRoomSummary()
+        {
+            var summary = await _context.EquipmentItems
+                .GroupBy(e => e.Room)
+                .OrderBy(g => g.Key)
+                .Select(g => new RoomSummaryResponse
+                {
+                    Room = g.Key,
+                    TotalCount = g.Count(),
+                    AvailableCount = g.Count(e => e.IsAvailable)
+                })
+                .ToListAsync();
+
+            return Ok(summary);
+        }
+
         // GET: api/equipment/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Equipment>> GetEquipment(int id)
